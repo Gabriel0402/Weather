@@ -8,7 +8,7 @@
 
 #import <Mantle/Mantle.h>
 
-@interface WXCondition : MTLModel
+@interface WXCondition : MTLModel<MTLJSONSerializing>
 
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSNumber *humidity;
