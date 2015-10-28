@@ -132,6 +132,16 @@
          // 4
          iconView.image = [UIImage imageNamed:[newCondition imageName]];
      }];
+    RAC(hiloLabel, text) = [[RACSignal combineLatest:@[
+                                                       // 2
+                                                       RACObserve([WXManager sharedManager], currentCondition.tempHigh),
+                                                       RACObserve([WXManager sharedManager], currentCondition.tempLow)]
+                             // 3
+                                              reduce:^(NSNumber *hi, NSNumber *low) {
+                                                  return [NSString  stringWithFormat:@"%.0f° / %.0f°",hi.floatValue,low.floatValue];
+                                              }]
+                            // 4
+                            deliverOn:RACScheduler.mainThreadScheduler];
     [[WXManager sharedManager] findCurrentLocation];
 
     // Do any additional setup after loading the view.

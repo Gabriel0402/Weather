@@ -29,40 +29,31 @@
 - (RACSignal *)fetchJSONFromURL:(NSURL *)url {
     NSLog(@"Fetching: %@",url.absoluteString);
     
-    // 1
     return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-        // 2
         NSURLSessionDataTask *dataTask = [self.session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (! error) {
                 NSError *jsonError = nil;
                 id json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
                 if (! jsonError) {
-                    // 1
                     [subscriber sendNext:json];
                 }
                 else {
-                    // 2
                     [subscriber sendError:jsonError];
                 }
             }
             else {
-                // 2
                 [subscriber sendError:error];
             }
             
-            // 3
             [subscriber sendCompleted];
         }];
         
-        // 3
         [dataTask resume];
         
-        // 4
         return [RACDisposable disposableWithBlock:^{
             [dataTask cancel];
         }];
     }] doError:^(NSError *error) {
-        // 5
         NSLog(@"%@",error);
     }];
 }

@@ -63,17 +63,17 @@
 #define MPS_TO_MPH 2.23694f
 
 + (NSValueTransformer *)windSpeedJSONTransformer {
-    return [MTLValueTransformer transformerUsingForwardBlock:^(NSNumber *num,BOOL *success, NSError **error) {
+    return [MTLValueTransformer reversibleTransformerWithForwardBlock:^(NSNumber *num) {
         return @(num.floatValue*MPS_TO_MPH);
-    } reverseBlock:^(NSNumber *speed,BOOL *success, NSError **error) {
+    } reverseBlock:^(NSNumber *speed) {
         return @(speed.floatValue/MPS_TO_MPH);
     }];
 }
 
 + (NSValueTransformer *)conditionDescriptionJSONTransformer {
-    return [MTLValueTransformer transformerUsingForwardBlock:^(NSArray *values,BOOL *success, NSError **error) {
+    return [MTLValueTransformer reversibleTransformerWithForwardBlock:^(NSArray *values) {
         return [values firstObject];
-    } reverseBlock:^(NSString *str,BOOL *success, NSError **error) {
+    } reverseBlock:^(NSString *str) {
         return @[str];
     }];
 }
@@ -87,9 +87,9 @@
 }
 
 + (NSValueTransformer *)dateJSONTransformer {
-    return [MTLValueTransformer transformerUsingForwardBlock:^(NSString *str,BOOL *success, NSError **error) {
+    return [MTLValueTransformer reversibleTransformerWithForwardBlock:^(NSString *str) {
         return [NSDate dateWithTimeIntervalSince1970:str.floatValue];
-    } reverseBlock:^(NSDate *date,BOOL *success, NSError **error) {
+    } reverseBlock:^(NSDate *date) {
         return [NSString stringWithFormat:@"%f",[date timeIntervalSince1970]];
     }];
 }

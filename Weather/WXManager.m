@@ -39,18 +39,13 @@
 
 - (id)init {
     if (self = [super init]) {
-        // 1
         _locationManager = [[CLLocationManager alloc] init];
         _locationManager.delegate = self;
         
-        // 2
         _client = [[WXClient alloc] init];
         
-        // 3
         [[[[RACObserve(self, currentLocation)
-            // 4
             ignore:nil]
-           // 5
            // Flatten and subscribe to all 3 signals when currentLocation updates
            flattenMap:^(CLLocation *newLocation) {
                return [RACSignal merge:@[
@@ -58,13 +53,9 @@
                                          [self updateDailyForecast],
                                          [self updateHourlyForecast]
                                          ]];
-               // 6
            }] deliverOn:RACScheduler.mainThreadScheduler]
-         // 7
          subscribeError:^(NSError *error) {
-             [TSMessage showNotificationWithTitle:@"Error"
-                                         subtitle:@"There was a problem fetching the latest weather."
-                                             type:TSMessageNotificationTypeError];
+             [TSMessage showNotificationWithTitle:@"Error" subtitle:@"There was a problem fetching the latest weather." type:TSMessageNotificationTypeError];
          }];
     }
     return self;
@@ -76,7 +67,6 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    // 1
     if (self.isFirstUpdate) {
         self.isFirstUpdate = NO;
         return;
@@ -84,9 +74,7 @@
     
     CLLocation *location = [locations lastObject];
     
-    // 2
     if (location.horizontalAccuracy > 0) {
-        // 3
         self.currentLocation = location;
         [self.locationManager stopUpdatingLocation];
     }
